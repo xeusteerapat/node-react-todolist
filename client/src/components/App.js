@@ -12,7 +12,7 @@ import {
   Form
 } from 'antd';
 import './App.css';
-import axios from 'axios';
+import axios from '../config/axios';
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -23,7 +23,7 @@ function App() {
 
   // fetch data from backend
   const fetchData = async () => {
-    const result = await axios.get('http://localhost:8000/tasks');
+    const result = await axios.get('/tasks');
     setTodoList(result.data);
   };
 
@@ -40,7 +40,7 @@ function App() {
     const body = {
       task: inputValue
     };
-    await axios.post('http://localhost:8000/tasks', body);
+    await axios.post('/tasks', body);
     fetchData();
     setInputValue('');
   };
@@ -50,7 +50,7 @@ function App() {
     const body = {
       isCompleted: e.target.checked
     };
-    await axios.put(`http://localhost:8000/tasks/${e.target.id}`, body);
+    await axios.put(`/tasks/${e.target.id}`, body);
     fetchData();
   };
 
@@ -61,7 +61,7 @@ function App() {
       // icon: <ExclamationCircleOutlined />,
       content: `Do you want to delete Task ID: ${id}`,
       onOk() {
-        axios.delete(`http://localhost:8000/tasks/${id}`).then(result => {
+        axios.delete(`/tasks/${id}`).then(result => {
           notification.success({
             message: `Delete Task ID: ${id}`,
             description: `You have been deleted task ID: ${id} permanently`
