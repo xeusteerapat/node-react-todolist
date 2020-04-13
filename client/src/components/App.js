@@ -1,20 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Modal,
-  Checkbox,
-  Typography,
-  List,
-  Row,
-  Col,
-  Input,
-  Button,
-  notification,
-  Form
-} from 'antd';
+import Todo from './Todo';
+import { Form, Row, Col, Input, Button, Modal, notification, List } from 'antd';
 import './App.css';
 import axios from '../config/axios';
 
-const { Text } = Typography;
 const { confirm } = Modal;
 
 function App() {
@@ -45,7 +34,7 @@ function App() {
     setInputValue('');
   };
 
-  // toggle complete todo
+  // Toggle complete todo
   const onChangeCheckBox = async e => {
     const body = {
       isCompleted: e.target.checked
@@ -54,8 +43,21 @@ function App() {
     fetchData();
   };
 
+  // Edit todo
+  const updateTodo = async (id, newTask) => {
+    const updatedTask = todoList.find(todo => todo.id === id);
+    updatedTask.task = newTask;
+
+    const body = {
+      task: updatedTask.task,
+      isCompleted: updatedTask.isCompleted
+    };
+    await axios.put(`/tasks/${id}`, body);
+    fetchData();
+  };
+
   // Delete task with confirmation
-  const deteleTask = async id => {
+  const deleteTask = async id => {
     confirm({
       title: 'Do you want to delete this items?',
       content: `Do you want to delete Task ID: ${id}`,
@@ -84,17 +86,15 @@ function App() {
             dataSource={todoList}
             renderItem={item => (
               <List.Item>
-                <Checkbox
+                <Todo
                   id={item.id}
                   key={item.id}
+                  todo={item.task}
+                  onChangeCheckBox={onChangeCheckBox}
+                  updateTodo={updateTodo}
+                  deleteTask={deleteTask}
                   checked={item.isCompleted}
-                  onChange={onChangeCheckBox}
-                >
-                  {item.task}
-                </Checkbox>
-                <Button type="danger" onClick={() => deteleTask(item.id)}>
-                  Delete
-                </Button>
+                />
               </List.Item>
             )}
           />
