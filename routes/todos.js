@@ -67,7 +67,7 @@ router.delete('/:id', async (req, res) => {
     const deleteTask = await db.Task.destroy({
       where: { id: Number(req.params.id) }
     });
-    res.sendStatus(204).send(deleteTask);
+    res.status(204).send();
   } catch (err) {
     console.error(err.message);
     res.status(400).send(err);
