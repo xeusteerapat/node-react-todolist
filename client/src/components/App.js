@@ -8,7 +8,8 @@ import {
   Col,
   Input,
   Button,
-  notification
+  notification,
+  Form
 } from 'antd';
 import './App.css';
 import axios from 'axios';
@@ -101,14 +102,24 @@ function App() {
         </Col>
       </Row>
       <Row justify="center">
-        <Col span={8}>
-          <Input value={inputValue} onChange={onChange} />
-        </Col>
-        <Col span={2}>
-          <Button style={{ width: '100%' }} onClick={onFinish}>
-            Add
-          </Button>
-        </Col>
+        <Form onFinish={onFinish}>
+          <Col span={24}>
+            <Form.Item>
+              <Input value={inputValue} onChange={onChange} />
+            </Form.Item>
+          </Col>
+          <Col>
+            <Form.Item>
+              <Button
+                style={{ width: '100%' }}
+                type="primary"
+                htmlType="submit"
+              >
+                Add
+              </Button>
+            </Form.Item>
+          </Col>
+        </Form>
       </Row>
     </div>
   );

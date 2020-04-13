@@ -1,53 +1,77 @@
 const express = require('express');
-const _ = require('lodash');
 const router = express.Router();
 
-const taskList = [];
+const db = require('../models');
 
 // Create a new todo
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { task } = req.body;
-  const newTask = {
-    id: Number(_.uniqueId()),
-    isCompleted: false,
-    task
-  };
-  taskList.push(newTask);
-  res.status(201).send(newTask);
+  try {
+    const newTask = await db.Task.create({
+      isCompleted: false,
+      task
+    });
+    res.status(201).send(newTask);
+  } catch (err) {
+    console.error(err.message);
+    res.status(400).send(err);
+  }
 });
 
-// Read todos
-router.get('/', (req, res) => {
-  res.status(200).send(taskList);
+// Retrieve all todos
+router.get('/', async (req, res) => {
+  try {
+    const todos = await db.Task.findAll();
+    res.status(200).send(todos);
+  } catch (err) {
+    console.error(err.message);
+    res.status(400).send(err);
+  }
 });
 
-// Retrieve single todo by id
-router.get('/:id', (req, res) => {
-  const targetId = Number(req.params.id);
-  res.status(200).send(taskList.find(task => task.id === targetId));
+// Retrieve single todo
+router.get('/:id', async (req, res) => {
+  try {
+    const task = await db.Task.findOne({
+      where: { id: Number(req.params.id) }
+    });
+    res.status(200).send(task);
+  } catch (err) {
+    console.error(err.message);
+    res.status(400).send(err);
+  }
 });
 
-// Update todo
-router.put('/:id', (req, res) => {
-  const targetId = Number(req.params.id);
-  const targetIndex = taskList.findIndex(task => task.id === targetId);
+// Update todo by id
+router.put('/:id', async (req, res) => {
+  const { task } = req.body;
 
-  taskList[targetIndex] = {
-    id: targetId,
-    task: req.body.task ? req.body.task : taskList[targetIndex].task,
-    isCompleted: Boolean(Number(req.body.isCompleted))
-  };
-
-  res.status(204).send(taskList[targetIndex]);
+  try {
+    const updatedTask = await db.Task.update(
+      {
+        task,
+        isCompleted: Boolean(Number(req.body.isCompleted))
+      },
+      { where: { id: Number(req.params.id) } }
+    );
+    res.status(200).send(updatedTask);
+  } catch (err) {
+    console.error(err.message);
+    res.status(400).send(err);
+  }
 });
 
 // Delete todo
-router.delete('/:id', (req, res) => {
-  const targetId = Number(req.params.id);
-  const targetIndex = taskList.findIndex(task => task.id === targetId);
-
-  taskList.splice(targetIndex, 1);
-  res.status(200).send(taskList);
+router.delete('/:id', async (req, res) => {
+  try {
+    const deleteTask = await db.Task.destroy({
+      where: { id: Number(req.params.id) }
+    });
+    res.sendStatus(204).send(deleteTask);
+  } catch (err) {
+    console.error(err.message);
+    res.status(400).send(err);
+  }
 });
 
 module.exports = router;
