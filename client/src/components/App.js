@@ -58,7 +58,6 @@ function App() {
   const deteleTask = async id => {
     confirm({
       title: 'Do you want to delete this items?',
-      // icon: <ExclamationCircleOutlined />,
       content: `Do you want to delete Task ID: ${id}`,
       onOk() {
         axios.delete(`/tasks/${id}`).then(result => {
@@ -102,24 +101,28 @@ function App() {
         </Col>
       </Row>
       <Row justify="center">
-        <Form onFinish={onFinish}>
-          <Col span={24}>
-            <Form.Item>
-              <Input value={inputValue} onChange={onChange} />
-            </Form.Item>
-          </Col>
-          <Col>
-            <Form.Item>
-              <Button
-                style={{ width: '100%' }}
-                type="primary"
-                htmlType="submit"
-              >
-                Add
-              </Button>
-            </Form.Item>
-          </Col>
-        </Form>
+        <Col span={10}>
+          <Form onFinish={onFinish}>
+            <Row>
+              <Col span={20}>
+                <Form.Item>
+                  <Input value={inputValue} onChange={onChange} />
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item>
+                  <Button
+                    style={{ width: '100%' }}
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    Add
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Col>
       </Row>
     </div>
   );
